@@ -54,18 +54,31 @@ function mytwitter() {
         access_token_secret: access_token_secret
     });
 
-    var twitterName = "kandacesweat";
+    client.get('search/tweets', { q: 'oprah' }, function(error, tweets, response) {
 
-    var params = { screen_name: twitterName, count: 20 };
 
-    client.get('statuses/user_timeline', params, function(error, tweets, response) {
-        if (!error) {
-            console.log(tweets);
+        for (i = 0; i < 5; i++) {
+            var created = tweets.statuses[i].created_at;
+            var status = tweets.statuses[i].text;
+            console.log("                ");
+            console.log("----------------")
+            console.log("----------------")
+
+            console.log("Status: " + status);
+            console.log("Date Created: " + created);
+
+            console.log("----------------")
+            console.log("----------------")
+            console.log("                ");
+
+
         }
+
+
     });
 
-}
 
+}
 
 function spot() {
 
@@ -161,12 +174,9 @@ function whatItSays() {
 
     // We will read the existing bank file
     fs.readFile("random.txt", "utf8", function(err, data) {
-        console.log(JSON.stringify(data, null, ' '));
-
-        dataArr = data.split(", ");
-
+        console.log(data);
+        var dataArr = data.split(", ");
         console.log(dataArr);
-
 
         spot();
 
