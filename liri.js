@@ -1,8 +1,10 @@
-var fs = require('fs');
-var Twitter = require('twitter');
-var spotify = require('spotify');
-var keys = require("./keys.js");
 var request = require('request');
+var spotify = require('spotify');
+var Twitter = require('twitter');
+var fs = require('fs');
+var keys = require('./keys.js');
+var querystring = require('querystring');
+var random = require('./random.js');
 
 //console.log(process.argv);
 
@@ -34,17 +36,18 @@ switch (processOne) {
 
 function mytwitter() {
 
-    // Gets twitter keys from keys.js.
+var params = {
+		screen_name: 'kandacesweat'
+	};
+	// Gets twitter keys from keys.js.
     var clientKeys = keys.twitterKeys;
-
-    // Loop through band list and print out details
+	// Loop through band list and print out details
     for (var key in clientKeys) {
         //console.log(clientKeys[key]);
         var consumer_key = clientKeys.consumer_key;
         var consumer_secret = clientKeys.consumer_secret;
         var access_token_key = clientKeys.access_token_key;
         var access_token_secret = clientKeys.access_token_secret;
-
     }
 
     var client = new Twitter({
@@ -54,29 +57,17 @@ function mytwitter() {
         access_token_secret: access_token_secret
     });
 
-    client.get('search/tweets', { q: 'oprah' }, function(error, tweets, response) {
-
-
-        for (i = 0; i < 5; i++) {
-            var created = tweets.statuses[i].created_at;
-            var status = tweets.statuses[i].text;
-            console.log("                ");
-            console.log("----------------")
-            console.log("----------------")
-
-            console.log("Status: " + status);
-            console.log("Date Created: " + created);
-
-            console.log("----------------")
-            console.log("----------------")
-            console.log("                ");
-
-
-        }
-
-
-    });
-
+	client.get('statuses/user_timeline', params, function(error, tweets, response) {
+		if(!error) {
+			for(var t = 0; t < tweets.length; t++) {
+				output = ('\n' + '@' + params.screen_name + ' said ' + tweets[t].text + ' at ' + tweets[t].created_at +'\n');
+				console.log(output);
+				append();
+			}
+		} else {
+			console.log('twitter error');
+		}
+	});
 
 }
 
@@ -184,4 +175,14 @@ function whatItSays() {
     });
 
 
+}
+
+function append() {
+	fs.appendFile('log.txt', output, function callback(error) {
+		if(!error) {
+			console.log('this data has been added to your log.');
+		} else {
+			console.log("sorry, the data didn't write to file.");
+		}
+	});
 }
